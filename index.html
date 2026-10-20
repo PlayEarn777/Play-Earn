@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEAR 777 - Casino & Mining Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b132b;
+            --card-bg: #1c2541;
+            --accent: #ffd700;
+            --text-color: #ffffff;
+            --secondary-text: #8d99ae;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0 0 70px 0;
+            box-sizing: border-box;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #121829;
+            border-bottom: 1px solid #2a3556;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--accent);
+        }
+        .balance-badge {
+            background: #2a3556;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .banner {
+            margin: 12px;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .section-title {
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 16px 0 8px 0;
+        }
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 16px;
+        }
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 8px;
+            cursor: pointer;
+            border: 1px solid #2a3556;
+        }
+        .game-card img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+        }
+        .game-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 6px;
+            padding: 0 4px;
+        }
+        .mining-box {
+            margin: 16px;
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #2a3556;
+        }
+        .btn {
+            background-color: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #121829;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #2a3556;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: var(--secondary-text);
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="logo">🐻 BEAR 777</div>
+        <div class="balance-badge" id="user-balance">1,000 Coins ($10.00)</div>
+    </div>
+
+    <!-- GAMES TAB -->
+    <div id="tab-games" class="tab-content active">
+        <div class="banner">
+            <h2 style="margin:0 0 6px 0; font-size:18px;">UP TO 360% Deposit Bonus!</h2>
+            <p style="margin:0; font-size:12px;">Active users get massive rewards on every deposit.</p>
+        </div>
+
+        <div class="section-title">Popular Slots & Casino</div>
+        <div class="games-grid">
+            <div class="game-card" onclick="launchGame('Anubis Wrath')">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300" alt="Anubis">
+                <div class="game-title">Anubis Wrath</div>
+            </div>
+            <div class="game-card" onclick="launchGame('Wild Bounty')">
+                <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=300" alt="Wild Bounty">
+                <div class="game-title">Wild Bounty</div>
+            </div>
+            <div class="game-card" onclick="launchGame('Crown Coins')">
+                <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=300" alt="Crown">
+                <div class="game-title">Crown Coins</div>
+            </div>
+            <div class="game-card" onclick="launchGame('Speed Winner')">
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300" alt="Speed">
+                <div class="game-title">Speed Winner</div>
+            </div>
+            <div class="game-card" onclick="launchGame('Gates of Olympus')">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" alt="Olympus">
+                <div class="game-title">Olympus Gates</div>
+            </div>
+            <div class="game-card" onclick="launchGame('Gemstones Gold')">
+                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300" alt="Gemstones">
+                <div class="game-title">Gemstones Gold</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EARN / MINING TAB -->
+    <div id="tab-earn" class="tab-content">
+        <div class="section-title">Crypto Cloud Mining</div>
+        <div class="mining-box">
+            <h3>Active Rig: AntMiner Pro</h3>
+            <p style="color: var(--secondary-text); font-size: 13px;">Mining speed & duration configured securely by Admin backend.</p>
+            <h2 style="color: var(--accent);" id="mining-status">Status: Ready to Mine</h2>
+            <button class="btn" onclick="startMining()">Start Mining Session</button>
+        </div>
+    </div>
+
+    <!-- DEPOSIT TAB -->
+    <div id="tab-deposit" class="tab-content">
+        <div class="section-title">Deposit Funds (Manual Verification)</div>
+        <div class="mining-box" style="text-align: left;">
+            <p><b>Step 1:</b> Transfer funds to Admin Payment Address (UPI / USDT).</p>
+            <p><b>Step 2:</b> Click below to notify bot and send screenshot proof.</p>
+            <button class="btn" onclick="triggerDeposit()">Proceed to Deposit & Upload Proof</button>
+        </div>
+    </div>
+
+    <!-- BONUSES TAB -->
+    <div id="tab-bonuses" class="tab-content">
+        <div class="section-title">Airdrops, Gifts & Leaderboard</div>
+        <div class="mining-box">
+            <h3>🏆 Top Depositors & Earners</h3>
+            <p style="font-size: 12px; color: var(--secondary-text);">1. @CryptoKing - 50,000 Coins<br>2. @LuckyPlayer - 34,200 Coins</p>
+            <button class="btn" onclick="claimAirdrop()">Claim Daily Gift / Airdrop</button>
+        </div>
+    </div>
+
+    <!-- USER PROFILE TAB -->
+    <div id="tab-mine" class="tab-content">
+        <div class="section-title">User Profile & Wallet</div>
+        <div class="mining-box" style="text-align: left;">
+            <p><b>Telegram ID:</b> <span id="tg-id">Loading...</span></p>
+            <p><b>Balance:</b> 1,000 Coins</p>
+            <p><b>Affiliate Link:</b> <span style="color:var(--accent);">t.me/yourbot?start=ref123</span></p>
+            <button class="btn" onclick="requestWithdrawal()">Request Withdrawal</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('games', this)">🎮 Games</div>
+        <div class="nav-item" onclick="switchTab('earn', this)">⛏️ Mining</div>
+        <div class="nav-item" onclick="switchTab('deposit', this)">💳 Deposit</div>
+        <div class="nav-item" onclick="switchTab('bonuses', this)">🎁 Bonuses</div>
+        <div class="nav-item" onclick="switchTab('mine', this)">👤 Profile</div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('tg-id').innerText = tg.initDataUnsafe.user.id;
+        }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classL
