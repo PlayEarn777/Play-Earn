@@ -144,6 +144,8 @@ input:focus, select:focus, textarea:focus{ outline: none; border-color: var(--go
 .accMeta{ font-size: 10px; color: #b9c6ee; margin-top: 6px; line-height: 1.5 }
 .glink{ text-align: center; margin-top: 9px }
 .glink b{ color: var(--gold); font-size: 11px; cursor: pointer; text-decoration: underline }
+#boxAdmin, #boxDiag{ display: none !important }
+body.isadm #boxAdmin, body.isadm #boxDiag{ display: block !important }
 .mod{ position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 12px }
 .mod .m2{ background: #0d1230; border: 1px solid var(--pur); border-radius: 12px; padding: 10px; max-width: 94vw; max-height: 90vh; overflow: auto; text-align: center }
 .mod img{ max-width: 100%; border-radius: 8px; display: block; margin-top: 8px }
@@ -771,8 +773,9 @@ input:focus, select:focus, textarea:focus{ outline: none; border-color: var(--go
 <div id="toast"></div>
 <script>
 
-var APP='https://api.telebotcreator.com/new-webhook?data=gAAAAABq4xK95AwVpNoFo-AzSO-mEUKZ0AYXotsXxlGJqqrJvF9CD4Q2AtpkXkld3fzGQPvHAap5TZhIIE6Q52xgnb2GMKxYWEoS_w-Zu8rwcz6RygfQlLhYGpAPDBpY-pbbTZoMPSyiQED5ES1uDdU4Yj53phdYm0OizorV1d6yQ3yik_1x2ry7xeKohqd35cvHJfFWxRhp';
+var APP='https://api.telebotcreator.com/new-webhook?data=gAAAAABq4xW4caaF6g5j4E9SMPia2Usj7_FT723eoRFyv6XuKuaCC6_XnmNBLpkniff9UImxjo1wL2Z779ms3MarhxIBlbOWfDu3QcL8hTNJ0aM_PTfHKVmdYOZdFajPkuRMtNE_dFn1EGpQ_M7-xWoaMjCfAYKvJJd8YNq9-Drm2z4lWM9tcUq9oCake-A1gH8nVm8GGT6w';
 var VER_EXPECTED=7;
+var BUILD=18;
 var TG=null;
 try{ if(window.Telegram && window.Telegram.WebApp){ TG=window.Telegram.WebApp; TG.ready(); TG.expand(); } }catch(e){ TG=null; }
 var state={ uid:0, tgUser:'', tgFirst:'', token:'', coins:0, rate:100, isAdmin:false, isFull:false, registered:false, loggedIn:false, balOk:false, srvUid:'', ver:0, cur:'USD', lang:'en', fx:0, first:'', last:'', username:'', depMethods:[], wdMethods:[], deps:[], wds:[], users:[], userForce:{}, pcts:{}, notifs:[], unread:0, selUser:'', ctrlNow:{}, globalMode:'normal', pendMode:'', pendOp:'', pendUF:'', selDep:null, starRate:5, seenNotif:'', teamEq:0, teamSub:0 };
@@ -873,6 +876,10 @@ function setAdminUI(){
  var t=el('tAdm'); if(t) t.style.display= on ? 'block' : 'none';
  var m=el('miAdm'); if(m) m.style.display= on ? 'flex' : 'none';
  var bb=el('bellBtn'); if(bb) bb.style.display= on ? 'block' : 'none';
+ try{
+  if(on){ document.body.classList.add('isadm'); }
+  else { document.body.classList.remove('isadm'); }
+ }catch(eb){}
  var bxa=el('boxAdmin'); if(bxa) bxa.style.display= on ? 'block' : 'none';
  var bxd=el('boxDiag'); if(bxd) bxd.style.display= on ? 'block' : 'none';
  updateBell();
@@ -918,7 +925,7 @@ function updBal(){
  txt('bal', ok ? (state.coins+' coins') : '--');
  txt('balusd', ok ? ('~ $'+usd.toFixed(2)+(loc?(' ~ '+sym+loc.toFixed(2)):'')) : '');
  txt('rateinfo', '1$ = '+(state.rate||100)+'c');
- txt('verinfo', 'v'+state.ver);
+ txt('verinfo', 'build '+BUILD);
  txt('wbal', ok ? (state.coins+' coins') : 'not loaded');
  var ws=el('wsub');
  if(ws){
@@ -928,7 +935,7 @@ function updBal(){
  var ab=el('aboutBox');
  if(ab){
   var okver = state.ver===VER_EXPECTED;
-  ab.innerHTML='app expects v'+VER_EXPECTED+' | server replied v'+state.ver+'<br>telegram ID '+esc(state.uid)+' | server saw '+esc(state.srvUid||'?')+'<br>'+(okver ? '<span class="win">up to date</span>' : '<span class="miss">STALE - old file or server unreachable</span>');
+  ab.innerHTML='file build '+BUILD+' | app expects v'+VER_EXPECTED+' | server replied v'+state.ver+'<br>telegram ID '+esc(state.uid)+' | server saw '+esc(state.srvUid||'?')+'<br>'+(okver ? '<span class="win">up to date</span>' : '<span class="miss">STALE - old file or server unreachable</span>');
  }
  var who=el('who');
  var nm=state.first || state.tgFirst || 'Player';
