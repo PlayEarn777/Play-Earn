@@ -665,7 +665,9 @@ body.isadm #boxAdmin, body.isadm #boxDiag{ display: block !important }
    <p class="hint">Every activity is posted to this channel automatically: deposits, withdrawals, new members, game results, daily bonuses. Make the bot an admin of the channel first, then put the username here.</p>
    <input id="adChannel" placeholder="@yourchannel"/>
    <div class="row"><button class="btn alt" id="adChanToggle" type="button">Feed: on</button><button class="btn okbtn" id="adChanSave" type="button">OK - save channel</button></div>
+   <div class="row"><button class="btn alt" id="adChanTest" type="button">🔔 Send test post</button><button class="btn alt" id="adChanLog" type="button">📋 Delivery log</button></div>
    <p class="hint" id="adChanMsg" style="margin-top:6px"></p>
+   <p class="hint" id="adChanLogBox" style="margin-top:6px"></p>
   </div>
   <div class="box">
    <h3>Broadcast to all users</h3>
@@ -773,7 +775,7 @@ body.isadm #boxAdmin, body.isadm #boxDiag{ display: block !important }
 <div id="toast"></div>
 <script>
 
-var APP='https://api.telebotcreator.com/new-webhook?data=gAAAAABq4xW4caaF6g5j4E9SMPia2Usj7_FT723eoRFyv6XuKuaCC6_XnmNBLpkniff9UImxjo1wL2Z779ms3MarhxIBlbOWfDu3QcL8hTNJ0aM_PTfHKVmdYOZdFajPkuRMtNE_dFn1EGpQ_M7-xWoaMjCfAYKvJJd8YNq9-Drm2z4lWM9tcUq9oCake-A1gH8nVm8GGT6w';
+var APP='https://api.telebotcreator.com/new-webhook?data=gAAAAABq4xxXZSwt2wMUaKKmJA69hxjFAffxE0SxSzzqvZZ9GX4T6sdmfTfaAVjnJGp2xhU8qyWZJ4zd6_UmTEPd7zmJTDJqxWnBzx0Zm9Uj2w5Y3kel0cUl3e5BBZzsXivFTgz44tvTC8QP2_TCITbpchL33vevr8LKUGaTkxsmGKKfbcIOGLYPHYFgAvjsVJjUm-hE6uZs';
 var VER_EXPECTED=7;
 var BUILD=18;
 var TG=null;
@@ -1163,7 +1165,7 @@ function finishOv(gm,res){
  addLog(gm,res);
  if(res.pid){
   var fpid=String(res.pid);
-  setTimeout(function(){ call('chan_flush',{ pid:fpid }); }, 1400);
+  setTimeout(function(){ call('chan_flush',{ pid:fpid }); }, 5000);
  }
  setTimeout(hideOv, 2600);
 }
@@ -2276,6 +2278,40 @@ function adminEventsSave(){
   else if(m){ m.textContent=(j&&j.error)||'failed'; }
  });
 }
+function adminChanTest(){
+ var m=el('adChanMsg');
+ if(m) m.textContent='Sending a test post to the channel...';
+ adminApiCall('chan_test').then(function(j){
+  if(j && j.ok){
+   if(m) m.textContent='Test post sent to '+j.channel+'. Check the channel now.';
+   toast('Test post sent'); sfx('coinin');
+  } else if(m){
+   m.textContent='NOT delivered: '+((j&&j.error)||'unknown')+(j&&j.channel?(' (channel '+j.channel+')'):'');
+  }
+ });
+}
+function adminChanLog(){
+ var m=el('adChanMsg');
+ var box=el('adChanLogBox');
+ if(m) m.textContent='Reading delivery log...';
+ adminApiClientLog();
+}
+function adminApiClientLog(){
+ var m=el('adChanMsg');
+ var box=el('adChanLogBox');
+ adminApiCall('chan_log').then(function(j){
+  if(!j || !j.ok){ if(m) m.textContent=(j&&j.error)||'failed'; return; }
+  if(m) m.textContent='Channel: '+(j.channel||'none')+' | feed '+(j.channel_on?'on':'off')+' | waiting to send: '+j.pending;
+  var lg=j.log||[];
+  if(!box) return;
+  if(!lg.length){ box.textContent='No delivery attempts recorded yet.'; return; }
+  var lines=[];
+  lg.forEach(function(e){
+   lines.push((e.ok?'OK   ':'FAIL ')+fmtAgo(e.t)+' - '+(e.w||'')+(e.ok?'':(' : '+e.e)));
+  });
+  box.textContent=lines.join(String.fromCharCode(10));
+ });
+}
 function adminChanToggle(){
  state.chanOn=!state.chanOn;
  var t=el('adChanToggle');
@@ -2977,6 +3013,8 @@ function boot(){
  on('adBonusSave',adminBonusSave);
  on('adEventsSave',adminEventsSave);
  on('adChanSave',adminChanSave);
+ on('adChanTest',adminChanTest);
+ on('adChanLog',adminChanLog);
  on('adChanToggle',adminChanToggle);
  var dgs=document.querySelectorAll('[data-go]');
  for(var gi=0; gi<dgs.length; gi++){
@@ -3029,6 +3067,7 @@ function boot(){
  gateMode('login');
  call('session').then(function(j){
   if(j && j.ok){
+   try{ call('chan_flush',{ pid:'' }); }catch(exf){}
    state.ver=parseInt(j.v||0)||0;
    state.isAdmin=!!j.is_admin;
    state.isFull=!!j.is_full;
